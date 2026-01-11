@@ -191,3 +191,36 @@ Notes:
 - If there is an active subscription for the vendor, the plan's `productLimit` applies; otherwise the `AdminSettings.freeProductLimit` is used (default 5).
 - Vendors must be `approved` to create products and `blocked` vendors are blocked from creating products.
 
+8) Vendor Signup & Email Verification (backend only)
+- Vendor Signup
+  - Endpoint: `POST /api/v1/vendor/signup`
+  - Headers: `Content-Type: application/json`
+  - Body (example):
+    {
+      "name": "Vendor One",
+      "email": "vendor1@example.com",
+      "phone": "9876543210",
+      "description": "My vendor",
+      "password": "SecurePass123!"
+    }
+  - Success (201): { "message": "Signup successful. Verify email with OTP sent to the provided email." }
+  - Errors:
+    - 400: { "error": "Name, email and password are required" }
+    - 400: { "error": "Email already registered" }
+    - 403: { "error": "This email is blocked from registering" }
+
+- Verify Email
+  - Endpoint: `POST /api/v1/vendor/verify-email`
+  - Headers: `Content-Type: application/json`
+  - Body (example):
+    { "email": "vendor1@example.com", "otp": "123456" }
+  - Success (200): { "message": "Email verified successfully" }
+  - Errors:
+    - 400: { "error": "Email and otp are required" }
+    - 404: { "error": "Vendor not found" }
+    - 400: { "error": "OTP expired" }
+    - 400: { "error": "Invalid OTP" }
+
+Notes:
+- OTP is stored on the vendor record (expires in 10 minutes by default) and sent via console log for now (mocked email).
+

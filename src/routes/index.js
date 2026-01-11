@@ -19,6 +19,10 @@ router.use('/admin/settings', settingsRoutes);
 const vendorRoutes = require('./vendors');
 router.use('/admin/vendors', vendorRoutes);
 
+// Public vendor routes (signup/login/verify)
+const vendorPublicRoutes = require('./vendor');
+router.use('/vendor', vendorPublicRoutes);
+
 // Mount product routes under vendor path: /api/v1/admin/vendors/:vendorId/products
 const productRoutes = require('./products');
 router.use('/admin/vendors/:vendorId/products', productRoutes);
