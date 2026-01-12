@@ -29,6 +29,7 @@ const fs = require('fs');
 
 const uploadsRoot = path.join(__dirname, '..', 'uploads');
 fs.mkdirSync(path.join(uploadsRoot, 'vendors'), { recursive: true });
+fs.mkdirSync(path.join(uploadsRoot, 'products'), { recursive: true });
 
 // Serve uploads statically
 app.use('/uploads', express.static(uploadsRoot));

@@ -31,6 +31,22 @@ router.use('/vendor-requests', vendorRequestRoutes);
 const adminVendorRequestRoutes = require('./adminVendorRequests');
 router.use('/admin/vendor-requests', adminVendorRequestRoutes);
 
+// Admin categories & field configs
+const adminCategories = require('./adminCategories');
+router.use('/admin/categories', adminCategories);
+
+// Admin products (monitoring & moderation)
+const adminProducts = require('./adminProducts');
+router.use('/admin/products', adminProducts);
+
+// Public categories
+const publicCategories = require('./publicCategories');
+router.use('/categories', publicCategories);
+
+// Public products
+const publicProducts = require('./publicProducts');
+router.use('/products', publicProducts);
+
 // Mount product routes under vendor path: /api/v1/admin/vendors/:vendorId/products
 const productRoutes = require('./products');
 router.use('/admin/vendors/:vendorId/products', productRoutes);

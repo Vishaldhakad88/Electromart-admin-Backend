@@ -24,7 +24,22 @@ async function submitRequest(req, res) {
     existingVendorRequest.category = category || existingVendorRequest.category;
     await existingVendorRequest.save();
 
-    console.log(`Vendor request OTP for ${existingVendorRequest.email}: ${otp} (expires in ${minutes} minutes)`);
+    // Attempt to send OTP email (non-blocking)
+    try {
+      const { sendEmail } = require('../utils/emailService');
+      await sendEmail({
+        to: existingVendorRequest.email,
+        subject: 'ElectroMart – Vendor Email Verification',
+        text: `Your OTP is ${otp}. It is valid for ${minutes} minutes.`
+      });
+    } catch (err) {
+      console.error('Failed to send OTP email to %s: %s', existingVendorRequest.email, err && err.message ? err.message : err);
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Vendor request OTP for ${existingVendorRequest.email}: ${otp} (expires in ${minutes} minutes)`);
+    }
+
     return res.status(201).json({ message: 'Vendor request submitted. Verify email with OTP.' });
   }
 
@@ -45,8 +60,22 @@ async function submitRequest(req, res) {
 
   await vr.save();
 
-  // Print OTP to console (DEV MODE)
-  console.log(`Vendor request OTP for ${vr.email}: ${otp} (expires in ${minutes} minutes)`);
+  // Attempt to send OTP email (non-blocking)
+  try {
+    const { sendEmail } = require('../utils/emailService');
+    await sendEmail({
+      to: vr.email,
+      subject: 'ElectroMart – Vendor Email Verification',
+      text: `Your OTP is ${otp}. It is valid for ${minutes} minutes.`
+    });
+  } catch (err) {
+    console.error('Failed to send OTP email to %s: %s', vr.email, err && err.message ? err.message : err);
+  }
+
+  // Preserve console OTP in non-production for convenience
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`Vendor request OTP for ${vr.email}: ${otp} (expires in ${minutes} minutes)`);
+  }
 
   res.status(201).json({ message: 'Vendor request submitted. Verify email with OTP.' });
 }

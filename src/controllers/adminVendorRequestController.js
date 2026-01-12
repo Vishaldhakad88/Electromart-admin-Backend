@@ -46,6 +46,18 @@ async function updateRequest(req, res) {
   vr.status = 'approved';
   await vr.save();
 
+  // Attempt to send approval email (non-blocking)
+  try {
+    const { sendEmail } = require('../utils/emailService');
+    await sendEmail({
+      to: vendor.email,
+      subject: 'Vendor Request Approved – ElectroMart',
+      text: 'Your vendor request has been approved.\nPlease set your password to continue.'
+    });
+  } catch (err) {
+    console.error('Failed to send approval email to %s: %s', vendor.email, err && err.message ? err.message : err);
+  }
+
   res.json({ message: 'Vendor request approved and vendor account created', vendorId: vendor._id });
 }
 

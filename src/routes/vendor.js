@@ -26,4 +26,8 @@ router.put('/profile', vendorAuth, upload.fields([
   { name: 'shopImages', maxCount: 5 }
 ]), updateProfile);
 
+// Vendor products (protected)
+const vendorProductsRoutes = require('./vendorProducts');
+router.use('/products', vendorProductsRoutes);
+
 module.exports = router;
