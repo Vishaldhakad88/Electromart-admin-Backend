@@ -51,6 +51,14 @@ router.use('/products', publicProducts);
 const productRoutes = require('./products');
 router.use('/admin/vendors/:vendorId/products', productRoutes);
 
+// Vendor product routes (protected - vendor CRUD on own products)
+const vendorProductRoutes = require('./vendorProducts');
+router.use('/vendor/products', vendorProductRoutes);
+
+// User auth & profile routes (public signup/login, protected profile endpoints)
+const userRoutes = require('./users');
+router.use('/users', userRoutes);
+
 // Admin subscription plans (protected)
 const plansRoutes = require('./plans');
 router.use('/admin/plans', plansRoutes);
