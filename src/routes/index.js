@@ -63,4 +63,19 @@ router.use('/users', userRoutes);
 const plansRoutes = require('./plans');
 router.use('/admin/plans', plansRoutes);
 
+
+// Admin dashboard summary
+const adminDashboardRoutes = require('./adminDashboard');
+router.use('/admin', adminDashboardRoutes);
+
+// Admin users list
+const adminUsersRoutes = require('./adminUsers');
+router.use('/admin', adminUsersRoutes);
+
+
+// Chat routes
+const chatRoutes = require('./chats');
+router.use('/chats', chatRoutes);
+
+
 module.exports = router;

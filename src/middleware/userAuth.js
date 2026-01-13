@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 const userAuth = async (req, res, next) => {
   try {
@@ -14,19 +15,22 @@ const userAuth = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Check role is 'user'
-    if (decoded.role !== 'user') {
+    // Check role
+    if (decoded.role !== 'user' || !decoded.userId) {
       return res.status(403).json({ error: 'Forbidden: Invalid user token' });
     }
 
-    // Attach user to request
-    req.user = decoded;
+    // ✅ FETCH FULL USER DOCUMENT
+    const user = await User.findById(decoded.userId).select('-password');
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    // ✅ ATTACH FULL USER DOC
+    req.user = user;
 
     // Update lastActiveAt (non-blocking)
-    const User = require('../models/User');
-    User.findByIdAndUpdate(decoded.userId, { lastActiveAt: new Date() }).catch(() => {
-      /* silent fail for lastActiveAt update */
-    });
+    User.findByIdAndUpdate(user._id, { lastActiveAt: new Date() }).catch(() => {});
 
     next();
   } catch (err) {
