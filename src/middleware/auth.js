@@ -7,7 +7,7 @@ async function adminAuth(req, res, next) {
     return res.status(401).json({ error: 'Missing Authorization header' });
   }
 
-  const token = auth.split(' ')[1];
+  const token = auth.split(' ')[1]; 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     // Attach admin basic info to request (ensure admin exists)

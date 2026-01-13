@@ -3,33 +3,27 @@ const bcrypt = require('bcryptjs');
 
 const AdminSchema = new mongoose.Schema(
   {
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true
-    },
-    password: {
-      type: String,
-      required: true
-    }
+    email: { type: String, required: true, unique: true, lowercase: true },
+    password: { type: String, required: true },
+
+    // ✅ Added for profile
+    name: { type: String, default: 'Admin' },
+    phone: { type: String, default: '' },
+    profileImage: { type: String, default: '' }
   },
   { timestamps: true }
 );
 
-// Hash password before save
+// Hash password
 AdminSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// Instance method to compare passwords
-AdminSchema.methods.comparePassword = async function (candidatePassword) {
+// Compare password
+AdminSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-const Admin = mongoose.model('Admin', AdminSchema);
-module.exports = Admin;
+module.exports = mongoose.model('Admin', AdminSchema);
