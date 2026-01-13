@@ -1,35 +1,51 @@
 require('dotenv').config();
+
 const app = require('./app');
 const { connectDB } = require('./config/db');
 
-const PORT = process.env.PORT || 5000;
+const PORT =  8000;
 
-(async () => {
+(async function startServer() {
   try {
+    // 1️⃣ Connect Database
     await connectDB();
+    console.log('✅ Database connected');
 
-    // Verify SMTP transporter (non-fatal). Only attempt verification when SMTP_ENABLED=true
+    // 2️⃣ SMTP verification (optional, non-fatal)
     const { verifyTransporter, SMTP_ENABLED } = require('./utils/emailService');
-    if (SMTP_ENABLED) {
-      verifyTransporter().catch(() => { /* verification failure already logged in verifyTransporter */ });
+
+    if (SMTP_ENABLED === true || SMTP_ENABLED === 'true') {
+      verifyTransporter()
+        .then(() => console.log('✅ SMTP verified'))
+        .catch((err) =>
+          console.warn('⚠️ SMTP verification failed:', err.message)
+        );
     } else {
-      console.log('SMTP disabled by configuration; skipping verification');
+      console.log('ℹ️ SMTP disabled, skipping verification');
     }
 
-    const server = app.listen(PORT, () => {
-      console.log(`ElectroMart Admin API server listening on port ${PORT}`);
+    // 3️⃣ Root route
+    app.get('/', (req, res) => {
+      res.status(200).send('Welcome to the ElectroMart Admin API');
     });
 
+    // 4️⃣ Start server
+    const server = app.listen(PORT, () => {
+      console.log(`🚀 ElectroMart Admin API running on port ${PORT}`);
+    });
+
+    // 5️⃣ Handle server errors
     server.on('error', (err) => {
-      if (err && err.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} is already in use. Free it or set PORT env var.`);
-        process.exit(1);
+      if (err.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} already in use`);
+      } else {
+        console.error('❌ Server error:', err);
       }
-      console.error('Server error:', err);
       process.exit(1);
     });
-  } catch (err) {
-    console.error('Failed to start server', err);
+
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 })();

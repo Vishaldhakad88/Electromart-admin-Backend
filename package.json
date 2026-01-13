@@ -2,10 +2,10 @@
   "name": "electromart-admin-backend",
   "version": "0.1.0",
   "description": "ElectroMart - Admin backend (MERN) - Admin auth + foundation",
-  "main": "src/server.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "seed": "node src/scripts/seedAdmin.js",
     "seed-settings": "node src/scripts/seedSettings.js",
     "seed-plans": "node src/scripts/seedPlans.js",
